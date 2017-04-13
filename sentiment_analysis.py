@@ -1,4 +1,6 @@
 import pandas as pd
+import collections
+import random
 
 class SentimentAnalysis(object):
 
@@ -38,15 +40,17 @@ class SentimentAnalysis(object):
 
         return reviews
 
+    # random shuffle reviews
     def training_reviews_shuffle(reviews):
 
-        # TODO: random shuffle reviews
-
-        return reviews
+        return random.shuffle(reviews)
 
     def top_words(lemmatized_reviews, training_reviews):
 
         # TODO: 3000 most frequently seen words in all the lemmatized_reviews of all Review objects in training_reviews
+        list_of_all_words = "" # ???
+        word_counts = collections.Counter(list_of_all_words)
+        word_counts.most_common(3000)
 
         return []
 
