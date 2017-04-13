@@ -1,44 +1,42 @@
-# import statements here
+
 import csv
 from random import randint
 from review import Review
 
-##### User Message Processing ##########################################################################################
+##### User Message Processing ############################################################
 
 def swear_words(user_msg):
     swears = ["fuck", "dick", "fucker", "shit", 'asshole', 'bitch', 'whore', 'slut']
     words = user_msg.split(" ")
     for word in words:
-       for swear in swears:
-           if word == swear:
-               return True
-
-
+        for swear in swears:
+            if word == swear:
+                return True
 
 def recommendation_request(user_msg):
     if user_msg.lower() == "recommend me":
         return True
-    
-##### Reply ############################################################################################################
+
+##### Reply #############################################################################
 
 def recommendation():
-    
+
     data = []
     with open('cafes.csv', 'rb') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             data.append(row)
-    
+
     randomRow = randint(1, len(data))
     return data[randomRow]
 
 def review(user_msg):
-    
+
     review = Review(user_msg)
     review.sentiment = review.predict_sentiment()
     review.store_review()
-    
-    return review.lemmas;
+
+    return review.lemmatized_review
     
  #   if review.sentiment == 1:
  #       return "Thanks for positive review"
@@ -52,7 +50,7 @@ def review(user_msg):
 	#:return: a string responding to the review
 	#"""
 
-##### Chatbot Functionality ############################################################################################
+##### Chatbot Functionality ##############################################################
 
 def index():
 	pass  # don't write anything here yet
