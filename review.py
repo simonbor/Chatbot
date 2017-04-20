@@ -5,12 +5,19 @@ from random import randint
 from spacy.en import English
 
 class Review(object):
-    def __init__(self, review_text, stars=None):
+    def __init__(self, review_text, parser, stars=None):
 
         self.review = self.clean_text(review_text)
         self.review_sentiment = self.convert_stars(stars)
 
         self.top_words_in_corpus = ["good", "bad", "amazing", "disgusting", "menu"]
+
+    # positive_text = "This restaurant was the best! I loved the pizza and the service was fast.”
+    # negative_text = "This restaurant was awful. The food was so bad and the service was slow. Never going again!"
+
+    # print clf.predict(real_time_features)
+
+        self.parser = parser
         self.lemmatized_review = self.lemmatize(review_text)
 
     def clean_text(self, review_text):
@@ -50,10 +57,9 @@ class Review(object):
 
     def lemmatize(self, review_text):
 
-        parser = English()
         lemmas = []
 
-        doc = parser(review_text.decode("utf-8"))
+        doc = self.parser(review_text.decode("utf-8"))
 
         for token in doc:
             if token.lemma_ not in spcy.STOP_WORDS:
