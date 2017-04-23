@@ -105,7 +105,7 @@ def find_labels(review_objs):
 if __name__ == "__main__":
 
 	# get review data from csv file
-	review_objs = open_csv("../cafe_reviews.csv")
+	review_objs = open_csv("cafe_reviews.csv")
 
 	# separate into positive and negative, allocate correctly for training/testing
 	positive_reviews, negative_reviews = sort_reviews(review_objs)
