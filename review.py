@@ -6,7 +6,7 @@ from nltk import word_tokenize, pos_tag
 from nltk.corpus import stopwords, wordnet
 from sklearn.feature_extraction import stop_words
 from nltk.stem import WordNetLemmatizer
-
+import pickle
 
 class Review(object):
 	def __init__(self, review_text, stars=None):
@@ -166,15 +166,19 @@ class Review(object):
 		return features
 
 	def predict_sentiment(self):
-		"""
-		If a review does not come with a
-		In the future this section will use a ML model to predict
-		negative:0 or positive:1 sentiment.
-		:return: a randomly generate a number between 0 and 1
-		"""
-		sentiment = randint(0, 1)
 
-		return sentiment
+		# Intelligent Bot Exercise 2 ============================================
+
+		top_words_file = open("top_words.p",'rb') # .p to remember it’s a pickle
+		top_words = pickle.load(top_words_file) # load the string object from the file
+		top_words_file.close()
+
+		clf_model_file = open("clf_model.p",'rb')
+		clf_model = pickle.load(clf_model_file)
+		clf_model_file.close()
+
+		features = self.sentiment_feature_extraction(top_words)
+		return clf_model.predict(features)
 
 	def store_review(self):
 		"""

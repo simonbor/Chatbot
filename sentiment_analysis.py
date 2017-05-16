@@ -11,7 +11,8 @@ import random
 from review import Review
 import pandas
 import numpy as np
-
+import pickle
+from sklearn import svm
 
 def open_csv(file_location):
 	"""
@@ -124,3 +125,19 @@ if __name__ == "__main__":
 	# make the dataframes
 	testing_features = find_features(testing_reviews, top_words)
 	testing_labels = find_labels(testing_reviews)
+
+	# The model creation ======================================================
+
+	clf = svm.SVC()  # SVC = support vector classifier
+	clf.fit(training_features, training_labels)
+	accuracy = clf.score(testing_features, testing_labels)
+
+	# Intelligent Bot Exercise 2 ==============================================
+
+	top_words_file = open("top_words.p",'wb')  # .p to remember it’s a pickle
+	pickle.dump(top_words, top_words_file)  # pass file obj & obj of choice
+	top_words_file.close()  # close the file obj
+
+	clf_model_file = open("clf_model.p",'wb')  # .p to remember it’s a pickle
+	pickle.dump(clf, clf_model_file)  # pass file obj & obj of choice
+	clf_model_file.close()  # close the file obj

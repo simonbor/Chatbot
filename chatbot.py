@@ -1,6 +1,10 @@
 import csv
 from random import randint
 from review import Review
+from flask import Flask, render_template
+from flask import request, jsonify
+
+app = Flask(__name__) # initiate the app
 
 ##### User Message Processing #########################################################################################
 def swear_words(user_msg):
@@ -31,12 +35,11 @@ def recommendation_request(user_msg):
 
     if 'recommend me' in user_msg or 'recommend' in user_msg:
 
-            return True
+        return True
 
     else:
 
-            return False
-
+       return False
 
 ##### Replies ##########################################################################################################
 
@@ -85,30 +88,57 @@ def review(user_msg):
     predicted_sentiment = rvw.predict_sentiment()
 
     # store review
-    rvw.store_review()
+    #rvw.store_review()
 
     # if positive, respond to positive experience
     if predicted_sentiment == 1:
         response_msg = "Based on your review, it seems that you had a good time. Great! For another recommendation, please write: recommend me"
+        sentiment = True
 
     # otherwise it was negative, respond to negative experience
     else:
         response_msg = "Based on your review, it seems that you did not have a good time. I'm sorry! For another recommendation, please write: recommend me"
-    return response_msg
+        sentiment = False
 
+    return response_msg, sentiment
 
 ##### Chatbot Functionality ############################################################################################
+# route decorator allows us to bind a function to a URL & verb
 
+@app.route('/',  methods=['GET'])
 def index():
-    pass # FOR FUTURE USE!
+    return render_template("chatbot.html")
 
+@app.route('/chat', methods=['POST']) # automatically has the "request" variable
 def chat():
-    """
-    This function handles the user_msg by using the User Message Processing Functions to decide which Chatbot Response
-    Functions to use
+    user_msg = request.form.to_dict().get('msg').lower()
+    animations = ['takeoff', 'excited', 'crying', 'dancing', 'bored', 'heartbroke']
+        
+    swear_bool = swear_words(user_msg)
+    recommendation_bool = recommendation_request(user_msg)
+    
+    # chatbot logic
+    if swear_bool is True:
+        animation = animations[0]
+        response_msg = "I have detected indecent language in your response. Please choose appropriate words. For a recommendation, please write: recommend me"
 
-    :param None
-    :print: response string
+    elif recommendation_bool is True:
+        animation = animations[1]
+        response_msg = recommendation()
+
+    else:
+        animation = animations[2]
+        response_msg, sentiment = review(user_msg)
+
+        if sentiment:
+            animation = animations[3]
+        else:
+            animation = animations[5]
+        
+    # and you can create "response" variables easily
+    response = jsonify({"animation": animation, "msg": response_msg})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
     """
     user_msg = raw_input("")
 
@@ -127,13 +157,19 @@ def chat():
         response_msg = review(user_msg)
 
     print response_msg
+    """
 
-
+@app.route('/static/<path:path>')
 def static_file(path):
-    pass # FOR FUTURE USE!
+    return app.send_static_file(path)
+
+def hello_world():
+    return "hello world"
 
 if __name__ == '__main__':
+    app.run(debug=True) # run the app inside the main
 
+"""
     print "Hello! My name is Tel Aviv Cafebot. I am a chatbot designed to recommend cafes in Tel Aviv!"
     print "For a recommendation, please write: recommend me"
 
@@ -141,6 +177,11 @@ if __name__ == '__main__':
 
         chat()
 
+This restaurant was awful. The food was so bad and the service was slow. Never going again!
+This restaurant was the best! I loved the pizza and the service was fast.
+
+        
+"""
 
 
 
